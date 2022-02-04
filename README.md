@@ -1,5 +1,4 @@
 # Time Tracker
-Usefull little time tracking tool  
 Requirements: .NET 6.0  
 
 ### Description
