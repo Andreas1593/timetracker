@@ -1,3 +1,5 @@
 bin
 [Dd]ebug
 [Rr]elease
+/projects/*
+!/projects/test.csv

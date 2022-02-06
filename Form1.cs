@@ -378,7 +378,18 @@ namespace timetracker
 
                 if (sfd.ShowDialog() == DialogResult.OK)
                 {
-                    renderer.PdfDocument.Save(filename);
+                    try
+                    {
+                        filename = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "projects/" + filename + ".pdf");
+                        renderer.PdfDocument.Save(filename);
+                    }
+                    catch
+                    {
+                        // Save in the root directory if 'projects' doesn't exist
+                        filename = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, filename + ".pdf");
+                        renderer.PdfDocument.Save(filename);
+                    }
+                    
                 }
 
                 // ...and start a viewer
