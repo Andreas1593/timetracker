@@ -40,6 +40,7 @@
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolOpenButton = new System.Windows.Forms.ToolStripButton();
             this.toolCreateButton = new System.Windows.Forms.ToolStripButton();
+            this.toolExportButton = new System.Windows.Forms.ToolStripButton();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.projectLabel = new System.Windows.Forms.Label();
             this.textTodayLabel = new System.Windows.Forms.Label();
@@ -136,7 +137,8 @@
             this.toolStrip1.BackColor = System.Drawing.Color.WhiteSmoke;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolOpenButton,
-            this.toolCreateButton});
+            this.toolCreateButton,
+            this.toolExportButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(380, 25);
@@ -160,8 +162,20 @@
             this.toolCreateButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolCreateButton.Name = "toolCreateButton";
             this.toolCreateButton.Size = new System.Drawing.Size(23, 22);
-            this.toolCreateButton.Text = "Create a project";
+            this.toolCreateButton.Text = "Create project";
             this.toolCreateButton.Click += new System.EventHandler(this.toolCreateButton_click);
+            // 
+            // toolExportButton
+            // 
+            this.toolExportButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolExportButton.Enabled = false;
+            this.toolExportButton.Image = ((System.Drawing.Image)(resources.GetObject("toolExportButton.Image")));
+            this.toolExportButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolExportButton.Margin = new System.Windows.Forms.Padding(20, 1, 0, 2);
+            this.toolExportButton.Name = "toolExportButton";
+            this.toolExportButton.Size = new System.Drawing.Size(23, 22);
+            this.toolExportButton.Text = "Export project";
+            this.toolExportButton.Click += new System.EventHandler(this.toolExportButton_Click);
             // 
             // openFileDialog1
             // 
@@ -249,5 +263,6 @@
         private Label textTodayLabel;
         private Label timeTodayLabel;
         private System.Windows.Forms.Timer timerIdle;
+        private ToolStripButton toolExportButton;
     }
 }

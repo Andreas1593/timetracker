@@ -1,7 +1,7 @@
-using System.Text;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 // Usage: Debug.WriteLine("Text")
+using MigraDoc.Rendering;
 
 namespace timetracker
 {
@@ -108,16 +108,16 @@ namespace timetracker
         {
             if (startButton.Enabled)
             {
-                startButton.BackColor = Color.LimeGreen;
-                startButton.ForeColor = Color.Black;
+                startButton.BackColor = System.Drawing.Color.LimeGreen;
+                startButton.ForeColor = System.Drawing.Color.Black;
             }
             else
             {
                 timer1.Start();
                 timerIdle.Start();
 
-                startButton.BackColor = Color.DarkSeaGreen;
-                startButton.ForeColor = Color.Gray;
+                startButton.BackColor = System.Drawing.Color.DarkSeaGreen;
+                startButton.ForeColor = System.Drawing.Color.Gray;
             }
         }
 
@@ -125,13 +125,13 @@ namespace timetracker
         {
             if (stopButton.Enabled)
             {
-                stopButton.BackColor = Color.Tomato;
-                stopButton.ForeColor = Color.Black;
+                stopButton.BackColor = System.Drawing.Color.Tomato;
+                stopButton.ForeColor = System.Drawing.Color.Black;
             }
             else
             {
-                stopButton.BackColor = Color.Salmon;
-                stopButton.ForeColor = Color.Gray;
+                stopButton.BackColor = System.Drawing.Color.Salmon;
+                stopButton.ForeColor = System.Drawing.Color.Gray;
 
                 // Save the time when the user stops or opens a new dialog
                 timer1.Stop();
@@ -171,6 +171,8 @@ namespace timetracker
 
         private void loadProject(Stream fileStream)
         {
+            toolExportButton.Enabled = true;
+
             using (var streamReader = new StreamReader(fileStream))
             {
                 string line;
@@ -191,7 +193,19 @@ namespace timetracker
                     // Prevent IndexOutOfRangeException
                     if (line.Length > 17)
                     {
-                        int session = Int32.Parse(line[17..]);
+                        int session;
+                        try
+                        {
+                            session = Int32.Parse(line[17..]);
+                        }
+                        catch
+                        {
+                            MessageBox.Show("The file is corrupt.");
+                            startButton.Enabled = false;
+                            stopButton_enabledChanged(new object(), new EventArgs());
+                            toolExportButton.Enabled = false;
+                            return;
+                        }
 
                         // Sum up total time
                         timeTotal += session;
@@ -241,7 +255,7 @@ namespace timetracker
             startButton.Enabled = true;
         }
 
-        private string formatTime(int time)
+        public static string formatTime(int time)
         {
             // Time is saved in seconds
 
@@ -329,7 +343,52 @@ namespace timetracker
                     idle = true;
                 }
             }
+        }
 
+        private void toolExportButton_Click(object sender, EventArgs e)
+        {
+            if (path != null)
+            {
+                // Read the project file's content
+                string[] lines = System.IO.File.ReadAllLines(path);
+
+                // Create a MigraDoc document
+                var document = Documents.CreateDocument(lines);
+
+                // var ddl = MigraDoc.DocumentObjectModel.IO.DdlWriter.WriteToString(document);
+                MigraDoc.DocumentObjectModel.IO.DdlWriter.WriteToFile(document, "MigraDoc.mdddl");
+
+                var renderer = new PdfDocumentRenderer(true);
+                renderer.Document = document;
+
+                System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+                renderer.RenderDocument();
+
+                var filename = lines[0];
+
+                // Save the document...
+                SaveFileDialog sfd = new SaveFileDialog();
+                sfd.Title = "Export project as PDF";
+                sfd.Filter = "PDF file (*.pdf)|*.pdf";
+                sfd.FilterIndex = 2;
+                sfd.RestoreDirectory = true;
+                sfd.InitialDirectory = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "projects");
+                sfd.OverwritePrompt = false;
+
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    renderer.PdfDocument.Save(filename);
+                }
+
+                // ...and start a viewer
+                using (Process process = new Process())
+                {
+                    process.StartInfo.UseShellExecute = true;
+                    process.StartInfo.FileName = filename;
+                    process.Start();
+                }
+            }
         }
 
         private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
