@@ -94,7 +94,6 @@ namespace timetracker
             ofd.Title = "Open a project";
             ofd.Filter = "CSV file (*.csv)|*.csv";
             ofd.RestoreDirectory = true;
-            Debug.WriteLine(AppDomain.CurrentDomain.BaseDirectory);
             ofd.InitialDirectory = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "projects");
 
             if (ofd.ShowDialog() == DialogResult.OK)
@@ -229,7 +228,6 @@ namespace timetracker
         private void updateFile(string content)
         {
             // Write the latest record into the file
-            string projectName = projectLabel.Text;
             try
             {
                 using (StreamWriter sw = File.AppendText(path))
@@ -328,7 +326,6 @@ namespace timetracker
                 LastInputTicks = (int)LastInputInfo.dwTime;
                 // Number of idle ticks = system uptime ticks - number of ticks at last input    
                 IdleTicks = systemUptime - LastInputTicks;
-                Debug.WriteLine(IdleTicks);
 
                 // Pause timer without changing button states
                 if (idle && IdleTicks < 500)
@@ -371,6 +368,8 @@ namespace timetracker
                 SaveFileDialog sfd = new SaveFileDialog();
                 sfd.Title = "Export project as PDF";
                 sfd.Filter = "PDF file (*.pdf)|*.pdf";
+                sfd.DefaultExt = "pdf";
+                sfd.FileName = filename;
                 sfd.FilterIndex = 2;
                 sfd.RestoreDirectory = true;
                 sfd.InitialDirectory = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "projects");
@@ -380,13 +379,13 @@ namespace timetracker
                 {
                     try
                     {
-                        filename = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "projects/" + filename + ".pdf");
+                        filename = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "projects/" + sfd.FileName);
                         renderer.PdfDocument.Save(filename);
                     }
                     catch
                     {
                         // Save in the root directory if 'projects' doesn't exist
-                        filename = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, filename + ".pdf");
+                        filename = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, sfd.FileName);
                         renderer.PdfDocument.Save(filename);
                     }
                     

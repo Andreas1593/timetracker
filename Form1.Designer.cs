@@ -235,6 +235,7 @@
             this.Controls.Add(this.timeSessionLabel);
             this.Controls.Add(this.stopButton);
             this.Controls.Add(this.startButton);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "Time Tracker";

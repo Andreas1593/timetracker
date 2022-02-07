@@ -3,3 +3,4 @@ bin
 [Rr]elease
 /projects/*
 !/projects/test.csv
+!/projects/test.pdf
