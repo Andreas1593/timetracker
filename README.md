@@ -3,7 +3,7 @@ Requirements: .NET 6.0
 
 ### Description
 
-This simple little time tracker enables you to track the time while working on a project.
+This simple little time tracker enables you to track time while working on a project.
 
 ### Features
 
