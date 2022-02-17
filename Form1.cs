@@ -13,6 +13,9 @@ namespace timetracker
         int timeToday = 0;
         int timeTotal = 0;
 
+        string startDate;
+        string startTime;
+
         // Time passed since the last break
         // Saved to file on every break
         int timePassed = 0;
@@ -115,6 +118,10 @@ namespace timetracker
                 timer1.Start();
                 timerIdle.Start();
 
+                // Save the start time for later
+                startDate = DateTime.Now.ToString("yyyy-MM-dd");
+                startTime = DateTime.Now.ToString("HH:mm");
+
                 startButton.BackColor = System.Drawing.Color.DarkSeaGreen;
                 startButton.ForeColor = System.Drawing.Color.Gray;
             }
@@ -137,8 +144,7 @@ namespace timetracker
 
                 if (timePassed != 0)
                 {
-                    string content = DateTime.Now.ToString("yyyy-MM-dd") + ";" +
-                                     DateTime.Now.ToString("HH:mm") + ";" + timePassed;
+                    string content = startDate + ";" + startTime + ";" + timePassed;
                     updateFile(content);
                 }
 
@@ -401,9 +407,16 @@ namespace timetracker
             }
         }
 
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // Save latest record if the form gets closed while timer is running
+            stopTimer();
+        }
+
         private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
 
         }
+
     }
 }
