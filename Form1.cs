@@ -314,36 +314,40 @@ namespace timetracker
 
         private void timerIdle_Tick(object sender, EventArgs e)
         {
-            // Get the system uptime    
-            int systemUptime = Environment.TickCount;
-            // The tick at which the last input was recorded    
-            int LastInputTicks = 0;
-            // The number of ticks that passed since last input    
-            int IdleTicks = 0;
-            // Set the struct    
-            LASTINPUTINFO LastInputInfo = new LASTINPUTINFO();
-            LastInputInfo.cbSize = (uint)Marshal.SizeOf(LastInputInfo);
-            LastInputInfo.dwTime = 0;
+            // Check idle time only while running
+            if (!startButton.Enabled) {
+                // Get the system uptime    
+                int systemUptime = Environment.TickCount;
+                // The tick at which the last input was recorded    
+                int LastInputTicks = 0;
+                // The number of ticks that passed since last input    
+                int IdleTicks = 0;
+                // Set the struct    
+                LASTINPUTINFO LastInputInfo = new LASTINPUTINFO();
+                LastInputInfo.cbSize = (uint)Marshal.SizeOf(LastInputInfo);
+                LastInputInfo.dwTime = 0;
 
-            // If we have a value from the function    
-            if (GetLastInputInfo(ref LastInputInfo))
-            {
-                // Get the number of ticks at the point when the last activity was seen    
-                LastInputTicks = (int)LastInputInfo.dwTime;
-                // Number of idle ticks = system uptime ticks - number of ticks at last input    
-                IdleTicks = systemUptime - LastInputTicks;
+                // If we have a value from the function    
+                if (GetLastInputInfo(ref LastInputInfo))
+                {
+                    // Get the number of ticks at the point when the last activity was seen    
+                    LastInputTicks = (int)LastInputInfo.dwTime;
+                    // Number of idle ticks = system uptime ticks - number of ticks at last input    
+                    IdleTicks = systemUptime - LastInputTicks;
 
-                // Pause timer without changing button states
-                if (idle && IdleTicks < 500)
-                {
-                    timer1.Start();
-                    idle = false;
-                }
-                // Idle after 1 minute without input
-                else if (IdleTicks > 60000)
-                {
-                    timer1.Stop();
-                    idle = true;
+                    // Idle after 1 minute without input
+                    if (idle && IdleTicks < 500)
+                    {
+                        timer1.Start();
+                        idle = false;
+                    }
+
+                    // Pause timer without changing button states
+                    else if (IdleTicks > 60000)
+                    {
+                        timer1.Stop();
+                        idle = true;
+                    }
                 }
             }
         }
